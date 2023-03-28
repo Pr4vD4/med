@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SpecialitiesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,12 +16,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//Route::middleware(['auth:sanctum', 'admin'])->get('/user', function (Request $request) {
 //    return $request->user();
 //});
 
-Route::get('/del', [UserController::class, 'del']);
+Route::post('/users/auth', [UserController::class, 'auth']);
 
-//Route::apiResources([
-//    'users' => UserController::class
-//]);
+Route::get('/users/profile', [UserController::class, 'profile'])->middleware(['auth:sanctum']);
+
+Route::apiResources([
+    'users' => UserController::class,
+]);
+
+Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
+   Route::apiResources([
+       'specialities' => SpecialitiesController::class,
+   ]);
+   Route::patch('/users/spec/sync', [UserController::class, 'sync_speciality']);
+});
+
+Route::apiResources([
+    'specialities' => SpecialitiesController::class
+]);

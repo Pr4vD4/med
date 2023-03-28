@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'birthday' => $this->birthday,
             'sex' => $this->sex,
+            'specialities' => $this->whenNotNull(SpecialityResource::collection($this->specialities))
         ];
     }
 }
