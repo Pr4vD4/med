@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
    Route::apiResources([
        'specialities' => SpecialitiesController::class,
    ]);
+   Route::patch('/users/spec/sync', [UserController::class, 'sync_speciality']);
 });
 
 Route::apiResources([

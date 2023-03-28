@@ -8,9 +8,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property  Specialities[] $specialities
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    public function specialities()
+    {
+        return $this->belongsToMany(Specialities::class, 'users_specialities');
+    }
 
     /**
      * The attributes that are mass assignable.

@@ -96,6 +96,26 @@ class UserController extends Controller
         ]);
     }
 
+    public function sync_speciality(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user' => 'required|exists:users,id',
+            'specialities' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 456);
+        }
+
+//        $user = User::find($request->user);
+        $user = User::query()->where('id', $request->user)->with('specialities')->first();
+
+        $user->specialities()->sync($request->specialities);
+
+        return response()->json(new UserResource(User::query()->where('id', $request->user)->with('specialities')->first()));
+
+    }
+
     public function profile()
     {
         return response()->json(new UserResource(Auth::user()));

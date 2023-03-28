@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Specialities extends Model
 {
     use HasFactory;
+
+    public function users() {
+        return $this->belongsToMany(User::class, 'users_specialities');
+    }
+
 }
