@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'birthday' => $this->birthday,
             'sex' => $this->sex,
             'role' => $this->role,
-            'appointments' => $this->whenNotNull($this->appointments),
+            'appointments' => $this->whenNotNull(UserResource::collection($this->appointments)),
             'specialities' => $this->whenNotNull(SpecialityResource::collection($this->specialities))
         ];
     }

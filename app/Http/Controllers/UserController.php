@@ -53,7 +53,10 @@ class UserController extends Controller
             $token = Auth::user()->createToken('login');
         }
 
-        return response()->json($token->plainTextToken, 201);
+        return response()->json([
+            'message' => 'success',
+            'token' => $token->plainTextToken
+        ], 201);
 
     }
 
@@ -124,19 +127,33 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user' => 'required|exists:users,id',
-            'doctor' => 'required|exists:users,id'
+            'doctor' => 'required|exists:users,id',
+            'appointment_time' => 'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
 
-        $user = User::query()->where('id', $request->user);
-        $doctor = User::query()->where('id', $request->doctor);
+        $user = User::query()->where('user_id', $request->user);
+        $doctor = User::query()->where('user_id', $request->doctor);
+
+        if (!is_null(DoctorUser::query()->where('doctor_id', $request->doctor)->where('appointment_time', $request->appointment_time)->first())) {
+            return response()->json([
+                'message' => 'Данное время занято'
+            ], 400);
+        }
 
         $table = new DoctorUser();
 
         $table->user_id = $request->user;
+        $table->doctor_id = $request->doctor;
+        $table->appointment_time = $request->appointment_time;
+
+//        dd($table, $user, $doctor);
+
+        $table->save();
+        return response()->json(new UserResource($user), 201);
 
 
     }
@@ -150,8 +167,9 @@ class UserController extends Controller
     public function doctors()
     {
 //        dd(User::query()->where('role', 2)->get());
-        return response()->json(UserResource::collection(User::query()->where('role', 2)->get()));
+        return response()->json(DoctorRes::collection(User::query()->where('role', 2)->get()));
     }
+
 
     /**
      * Display the specified resource.

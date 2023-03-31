@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SpecialityResource;
+use App\Http\Resources\UserResource;
 use App\Models\Specialities;
+use App\Models\User;
+use App\Models\UsersSpecialities;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -31,7 +34,7 @@ class SpecialitiesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'name' => 'required|unique:specialities'
+            'name' => 'required|unique:specialities'
         ]);
 
         if ($validator->fails()) {
@@ -49,6 +52,17 @@ class SpecialitiesController extends Controller
                 'speciality' => new SpecialityResource($speciality),
             ]
         ]);
+
+    }
+
+    public function doctors(int $id)
+    {
+        $doctors = UsersSpecialities::query()->where('specialities_id', $id)->get();
+
+
+        return response()->json([
+            'doctors' => $doctors
+        ], 201);
 
     }
 

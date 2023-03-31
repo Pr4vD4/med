@@ -17,13 +17,14 @@ class User extends Authenticatable
 
     public function specialities()
     {
-        return $this->belongsToMany(Specialities::class, 'users_specialities');
+        return $this->belongsToMany(Specialities::class, 'users_specialities', 'user_id', 'specialities_id');
     }
 
-    public function appointment()
+    public function appointments()
     {
-        return $this->belongsToMany(User::class, 'doctors_users');
+        return $this->belongsToMany(User::class, 'doctor_users', 'user_id', 'doctor_id');
     }
+
 
     /**
      * The attributes that are mass assignable.

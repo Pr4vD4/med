@@ -26,13 +26,16 @@ Route::get('/users/profile', [UserController::class, 'profile'])->middleware(['a
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/users/doctors', [UserController::class, 'doctors']);
+    Route::post('/users/appointment/make', [UserController::class, 'make_appointment']);
+
+    Route::get('/specialities/doctors/{id}', [SpecialitiesController::class, 'doctors']);
 });
 
 Route::apiResources([
     'users' => UserController::class,
 ]);
 
-Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
    Route::apiResources([
        'specialities' => SpecialitiesController::class,
    ]);
