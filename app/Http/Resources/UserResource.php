@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,8 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'birthday' => $this->birthday,
             'sex' => $this->sex,
+            'role' => $this->role,
+            'appointments' => $this->whenNotNull($this->appointments),
             'specialities' => $this->whenNotNull(SpecialityResource::collection($this->specialities))
         ];
     }

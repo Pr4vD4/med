@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
+use App\Models\DoctorUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -86,6 +87,9 @@ class UserController extends Controller
         $user->phone = $request->phone;
         $user->birthday = $request->birthday;
         $user->sex = $request->sex;
+        if (!is_null($request->role)) {
+            $user->role = $request->role;
+        }
         $user->password = Hash::make($request->password);
 
         $user->save();
@@ -104,7 +108,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 456);
+            return response()->json($validator->errors(), 400);
         }
 
 //        $user = User::find($request->user);
@@ -116,10 +120,37 @@ class UserController extends Controller
 
     }
 
+    public function make_appointment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user' => 'required|exists:users,id',
+            'doctor' => 'required|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $user = User::query()->where('id', $request->user);
+        $doctor = User::query()->where('id', $request->doctor);
+
+        $table = new DoctorUser();
+
+        $table->user_id = $request->user;
+
+
+    }
+
     public function profile()
     {
         return response()->json(new UserResource(Auth::user()));
 
+    }
+
+    public function doctors()
+    {
+//        dd(User::query()->where('role', 2)->get());
+        return response()->json(UserResource::collection(User::query()->where('role', 2)->get()));
     }
 
     /**
@@ -127,7 +158,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json(new UserResource(User::query()->find($id)));
     }
 
     /**

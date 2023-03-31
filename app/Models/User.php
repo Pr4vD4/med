@@ -20,6 +20,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Specialities::class, 'users_specialities');
     }
 
+    public function appointment()
+    {
+        return $this->belongsToMany(User::class, 'doctors_users');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

@@ -24,6 +24,10 @@ Route::post('/users/auth', [UserController::class, 'auth']);
 
 Route::get('/users/profile', [UserController::class, 'profile'])->middleware(['auth:sanctum']);
 
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/users/doctors', [UserController::class, 'doctors']);
+});
+
 Route::apiResources([
     'users' => UserController::class,
 ]);
